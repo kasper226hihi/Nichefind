@@ -1,12 +1,16 @@
 {
-  "version": 2,
+    "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" }
+  ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/questionnaire", "dest": "/questionnaire.html" },
     { "src": "/resultats", "dest": "/resultats.html" },
     { "src": "/pricing", "dest": "/pricing.html" },
-    { "src": "/(.*)\\.html", "dest": "/$1.html" },
+    { "src": "/(.*)\.html", "dest": "/$1.html" },
     { "src": "/(.*)", "dest": "/$1.html" }
   ]
 }
