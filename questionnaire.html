@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NicheFind — Questionnaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0A0F1E; --bg2:#0F1628; --surface:#111827; --surface2:#162035;
+    --border:rgba(129,140,248,0.1); --border2:rgba(129,140,248,0.2);
+    --ink:#ffffff; --ink2:rgba(255,255,255,0.7); --muted:rgba(255,255,255,0.35);
+    --accent:#818CF8; --accent2:#A5B4FC; --accent-bg:rgba(129,140,248,0.1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+  header { padding:0 48px; height:56px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); background:rgba(10,15,30,0.9); backdrop-filter:blur(12px); position:sticky; top:0; z-index:50; }
+  .logo { font-size:1.05rem; font-weight:800; letter-spacing:-0.03em; color:var(--ink); text-decoration:none; }
+  .logo span { color:var(--accent); }
+  .step-ind { font-size:0.75rem; color:var(--muted); font-weight:500; }
+  .progress-track { height:2px; background:var(--border); }
+  .progress-fill { height:100%; background:var(--accent); transition:width 0.5s cubic-bezier(.4,0,.2,1); }
+  main { flex:1; display:flex; align-items:center; justify-content:center; padding:48px 24px; }
+  .step-wrap { width:100%; max-width:580px; }
+  .step-wrap.hidden { display:none; }
+  .step-wrap.entering { animation:stepIn 0.32s cubic-bezier(.4,0,.2,1) forwards; }
+  .step-wrap.leaving { animation:stepOut 0.22s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes stepOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-20px)} }
+  .step-eyebrow { font-size:0.67rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .step-title { font-size:clamp(1.5rem,3.5vw,2rem); font-weight:800; line-height:1.15; letter-spacing:-0.035em; margin-bottom:6px; color:var(--ink); }
+  .step-sub { font-size:0.855rem; color:var(--muted); margin-bottom:26px; line-height:1.6; }
+  .opts-grid { display:grid; gap:7px; margin-bottom:26px; }
+  .opts-grid.cols-2 { grid-template-columns:1fr 1fr; }
+  .opts-grid.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+  .opts-grid.cols-auto { grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); }
+  .opt-btn { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:13px 15px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; align-items:flex-start; gap:4px; text-align:left; }
+  .opt-btn:hover { border-color:var(--border2); background:var(--surface2); }
+  .opt-btn.sel { border-color:var(--accent); background:rgba(129,140,248,0.08); }
+  .opt-icon { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:rgba(255,255,255,0.05); margin-bottom:2px; flex-shrink:0; }
+  .opt-icon svg { width:15px; height:15px; }
+  .opt-label { font-size:0.855rem; font-weight:600; color:var(--ink); line-height:1.2; }
+  .opt-desc { font-size:0.7rem; color:var(--muted); line-height:1.3; }
+  .int-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:26px; }
+  .int-btn { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:13px 10px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
+  .int-btn:hover { border-color:var(--border2); background:var(--surface2); }
+  .int-btn.sel { border-color:var(--accent); background:rgba(129,140,248,0.08); }
+  .int-icon { font-size:1.3rem; }
+  .int-label { font-size:0.78rem; font-weight:600; color:var(--ink); }
+  .sel-count { font-size:0.72rem; color:var(--muted); margin-bottom:10px; margin-top:-14px; min-height:16px; }
+  .sel-count.on { color:#6EE7B7; font-weight:600; }
+  .slider-wrap { margin-bottom:26px; }
+  .slider-display { line-height:1; margin-bottom:4px; }
+  .slider-num { font-size:3rem; font-weight:800; letter-spacing:-0.05em; color:var(--ink); }
+  .slider-unit { font-size:1.3rem; font-weight:600; color:var(--ink2); margin-left:1px; }
+  .slider-label { font-size:0.8rem; font-weight:400; color:var(--muted); margin-left:6px; }
+  .slider-hint { font-size:0.78rem; color:var(--muted); margin-bottom:18px; min-height:18px; }
+  input[type=range] { width:100%; height:2px; appearance:none; background:var(--border); border-radius:2px; outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb { appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid var(--bg); box-shadow:0 0 0 1px var(--accent); transition:transform 0.1s; }
+  input[type=range]::-webkit-slider-thumb:active { transform:scale(1.2); }
+  .slider-ticks { display:flex; justify-content:space-between; margin-top:8px; font-size:0.68rem; color:var(--muted); }
+  .nav-row { display:flex; gap:8px; }
+  .btn-back { background:none; border:1px solid var(--border); border-radius:8px; padding:11px 20px; font-size:0.83rem; font-weight:500; color:var(--muted); cursor:pointer; transition:all 0.15s; font-family:'Inter',sans-serif; }
+  .btn-back:hover { border-color:var(--border2); color:var(--ink2); }
+  .btn-next { flex:1; background:var(--accent); border:none; border-radius:8px; padding:12px; font-size:0.875rem; font-weight:700; color:var(--bg); cursor:pointer; transition:all 0.15s; font-family:'Inter',sans-serif; letter-spacing:-0.01em; }
+  .btn-next:disabled { opacity:0.25; cursor:not-allowed; }
+  .btn-next:not(:disabled):hover { opacity:0.88; transform:translateY(-1px); }
+  .loading-overlay { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; z-index:100; }
+  .loading-overlay.on { opacity:1; pointer-events:all; }
+  .loader { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin-bottom:18px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-label { font-size:0.855rem; color:var(--muted); font-weight:500; }
+  .loading-dots::after { content:''; animation:dots 1.5s steps(4,end) infinite; }
+  @keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} }
+  @media(max-width:540px) {
+    header { padding:0 20px; }
+    .int-grid { grid-template-columns:repeat(2,1fr); }
+    .opts-grid.cols-3 { grid-template-columns:1fr 1fr; }
+    .opts-grid.cols-auto { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Niche<span>Find</span></a>
+  <span class="step-ind">Étape <span id="snum">1</span> / 6</span>
+</header>
+<div class="progress-track"><div class="progress-fill" id="prog" style="width:16.67%"></div></div>
+<main>
+
+<!-- S1 -->
+<div class="step-wrap" id="s1">
+  <div class="step-eyebrow">Étape 1 — Plateforme</div>
+  <h1 class="step-title">Sur quelle plateforme veux-tu créer ?</h1>
+  <p class="step-sub">Ça définit le format de tes idées et les métriques affichées.</p>
+  <div class="opts-grid cols-auto">
+    <button class="opt-btn" data-v="youtube"><div class="opt-icon"><svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg></div><span class="opt-label">YouTube</span><span class="opt-desc">Vidéo longue · RPM élevé</span></button>
+    <button class="opt-btn" data-v="tiktok"><div class="opt-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M19.6 3a4.5 4.5 0 01-2.8-1A4.5 4.5 0 0115.2 0h-3.3v13.4a2.1 2.1 0 11-2.9-2V8a5.4 5.4 0 105.4 5.4V7.4a7.8 7.8 0 004.7 1.6V5.7A4.5 4.5 0 0114.4.6h4.2z" transform="translate(0,2)"/></svg></div><span class="opt-label">TikTok</span><span class="opt-desc">Vidéo courte · Viral</span></button>
+    <button class="opt-btn" data-v="instagram"><div class="opt-icon"><svg viewBox="0 0 24 24" width="15" height="15"><defs><radialGradient id="ig" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><path fill="url(#ig)" d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8 0 3.2 0 3.6-.1 4.8-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1-3.2 0-3.6 0-4.8-.1-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12c0-3.2 0-3.6.1-4.8C2.4 3.9 4 2.3 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zm0-2.2C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12c0 3.3 0 3.7.1 4.9.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24c3.3 0 3.7 0 4.9-.1 4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9 0-3.3 0-3.7-.1-4.9C23.7 2.7 21.3.3 16.9.1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 100 12.4A6.2 6.2 0 0012 5.8zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-11.8a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z"/></svg></div><span class="opt-label">Instagram</span><span class="opt-desc">Reels · Stories</span></button>
+    <button class="opt-btn" data-v="podcast"><div class="opt-icon"><svg viewBox="0 0 24 24" fill="#A78BFA" width="15" height="15"><path d="M12 1a4 4 0 014 4v7a4 4 0 01-8 0V5a4 4 0 014-4zm-1.5 16.9a6.5 6.5 0 003 0v1.6H15v1.5H9v-1.5h1.5v-1.6zM12 3a2 2 0 00-2 2v7a2 2 0 004 0V5a2 2 0 00-2-2zm8 9h-2a6 6 0 01-12 0H4a8 8 0 0016 0z"/></svg></div><span class="opt-label">Podcast</span><span class="opt-desc">Audio · Fidélité forte</span></button>
+    <button class="opt-btn" data-v="newsletter"><div class="opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div><span class="opt-label">Newsletter</span><span class="opt-desc">Email · Audience fidèle</span></button>
+    <button class="opt-btn" data-v="indecis"><div class="opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" stroke-linecap="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="rgba(255,255,255,0.4)"/></svg></div><span class="opt-label">Pas encore décidé</span><span class="opt-desc">On t'aide à choisir</span></button>
+  </div>
+  <div class="nav-row"><button class="btn-next" id="bn1" disabled onclick="next(1)">Continuer →</button></div>
+</div>
+
+<!-- S2 -->
+<div class="step-wrap hidden" id="s2">
+  <div class="step-eyebrow">Étape 2 — Tes passions</div>
+  <h1 class="step-title">Quels sujets t'intéressent ?</h1>
+  <p class="step-sub">Choisis jusqu'à 3 domaines — ils définissent directement tes niches recommandées.</p>
+  <div class="sel-count" id="sel-count">0 / 3 sélectionné</div>
+  <div class="int-grid">
+    <button class="int-btn" data-v="food"><span class="int-icon">🍕</span><span class="int-label">Food</span></button>
+    <button class="int-btn" data-v="gaming"><span class="int-icon">🎮</span><span class="int-label">Gaming</span></button>
+    <button class="int-btn" data-v="fitness"><span class="int-icon">💪</span><span class="int-label">Fitness</span></button>
+    <button class="int-btn" data-v="travel"><span class="int-icon">✈️</span><span class="int-label">Voyage</span></button>
+    <button class="int-btn" data-v="lifestyle"><span class="int-icon">🌿</span><span class="int-label">Lifestyle</span></button>
+    <button class="int-btn" data-v="education"><span class="int-icon">📚</span><span class="int-label">Éducation</span></button>
+    <button class="int-btn" data-v="tech"><span class="int-icon">💻</span><span class="int-label">Tech</span></button>
+    <button class="int-btn" data-v="finance"><span class="int-icon">💰</span><span class="int-label">Finance</span></button>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="back(2)">← Retour</button>
+    <button class="btn-next" id="bn2" disabled onclick="next(2)">Continuer →</button>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="step-wrap hidden" id="s3">
+  <div class="step-eyebrow">Étape 3 — Niveau</div>
+  <h1 class="step-title">Quel est ton niveau dans ces domaines ?</h1>
+  <p class="step-sub">Ça calibre la complexité des idées recommandées.</p>
+  <div class="opts-grid cols-2">
+    <button class="opt-btn" data-v="debutant"><div class="opt-icon">🌱</div><span class="opt-label">Débutant</span><span class="opt-desc">Je découvre à peine</span></button>
+    <button class="opt-btn" data-v="intermediaire"><div class="opt-icon">🌿</div><span class="opt-label">Intermédiaire</span><span class="opt-desc">J'ai de bonnes bases</span></button>
+    <button class="opt-btn" data-v="avance"><div class="opt-icon">🌳</div><span class="opt-label">Avancé</span><span class="opt-desc">Je maîtrise bien</span></button>
+    <button class="opt-btn" data-v="expert"><div class="opt-icon">⭐</div><span class="opt-label">Expert</span><span class="opt-desc">Niveau professionnel</span></button>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="back(3)">← Retour</button>
+    <button class="btn-next" id="bn3" disabled onclick="next(3)">Continuer →</button>
+  </div>
+</div>
+
+<!-- S4 -->
+<div class="step-wrap hidden" id="s4">
+  <div class="step-eyebrow">Étape 4 — Disponibilité</div>
+  <h1 class="step-title">Combien d'heures par semaine ?</h1>
+  <p class="step-sub">Ça influence la complexité et le volume de contenu recommandé.</p>
+  <div class="slider-wrap">
+    <div class="slider-display">
+      <span class="slider-num" id="tval">5</span><span class="slider-unit">h</span><span class="slider-label">/ semaine</span>
+    </div>
+    <div class="slider-hint" id="thint">Idéal pour commencer progressivement</div>
+    <input type="range" min="1" max="20" value="5" step="1" id="tslider">
+    <div class="slider-ticks"><span>1h</span><span>5h</span><span>10h</span><span>15h</span><span>20h</span></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="back(4)">← Retour</button>
+    <button class="btn-next" onclick="next(4)">Continuer →</button>
+  </div>
+</div>
+
+<!-- S5 -->
+<div class="step-wrap hidden" id="s5">
+  <div class="step-eyebrow">Étape 5 — Objectif</div>
+  <h1 class="step-title">Qu'est-ce que tu veux accomplir ?</h1>
+  <p class="step-sub">Ton objectif oriente la stratégie de contenu recommandée.</p>
+  <div class="opts-grid cols-3">
+    <button class="opt-btn" data-v="passion"><div class="opt-icon">❤️</div><span class="opt-label">Par passion</span><span class="opt-desc">Pour le plaisir</span></button>
+    <button class="opt-btn" data-v="revenus"><div class="opt-icon">💸</div><span class="opt-label">Générer des revenus</span><span class="opt-desc">Monétiser</span></button>
+    <button class="opt-btn" data-v="brand"><div class="opt-icon">🏆</div><span class="opt-label">Personal brand</span><span class="opt-desc">Se faire connaître</span></button>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="back(5)">← Retour</button>
+    <button class="btn-next" id="bn5" disabled onclick="next(5)">Continuer →</button>
+  </div>
+</div>
+
+<!-- S6 -->
+<div class="step-wrap hidden" id="s6">
+  <div class="step-eyebrow">Étape 6 — Format</div>
+  <h1 class="step-title" id="s6title">Comment veux-tu apparaître dans ton contenu ?</h1>
+  <p class="step-sub">Ça adapte les formats de contenu à ta façon de créer.</p>
+  <div class="opts-grid cols-2" id="s6opts"></div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="back(6)">← Retour</button>
+    <button class="btn-next" id="bn6" disabled onclick="next(6)">Analyser mes niches →</button>
+  </div>
+</div>
+
+</main>
+<div class="loading-overlay" id="loader">
+  <div class="loader"></div>
+  <div class="loading-label">Analyse en cours<span class="loading-dots"></span></div>
+</div>
+
+<script>
+const ans = { platform:'', interests:[], niveau:'', temps:5, objectif:'', visibilite:'' };
+[1,3,5].forEach(s => {
+  document.querySelectorAll(`#s${s} .opt-btn`).forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll(`#s${s} .opt-btn`).forEach(x => x.classList.remove('sel'));
+      b.classList.add('sel');
+      const bn = document.getElementById(`bn${s}`);
+      if(bn) bn.disabled = false;
+    });
+  });
+});
+document.querySelectorAll('#s2 .int-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    const v = b.dataset.v;
+    if(b.classList.contains('sel')) { b.classList.remove('sel'); ans.interests = ans.interests.filter(x=>x!==v); }
+    else if(ans.interests.length < 3) { b.classList.add('sel'); ans.interests.push(v); }
+    const cnt = ans.interests.length;
+    const el = document.getElementById('sel-count');
+    el.textContent = cnt + ' / 3 sélectionné' + (cnt>1?'s':'');
+    el.className = 'sel-count' + (cnt>0?' on':'');
+    document.getElementById('bn2').disabled = cnt === 0;
+  });
+});
+const hints = ['Parfait pour démarrer doucement','Bien pour commencer progressivement','Bien pour commencer progressivement','Bon rythme pour publier régulièrement','Bon rythme pour publier régulièrement','Pour créer du contenu sérieux','Pour créer du contenu sérieux','Rythme de créateur à temps partiel','Rythme de créateur à temps partiel','Disponibilité importante','Disponibilité importante','Rythme quasi-professionnel','Rythme quasi-professionnel','Rythme quasi-professionnel','Prêt pour un vrai rythme créateur','Prêt pour un vrai rythme créateur','Haute fréquence, multi-format','Haute fréquence, multi-format','Niveau professionnel complet','Niveau professionnel complet'];
+document.getElementById('tslider').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  document.getElementById('tval').textContent = v;
+  document.getElementById('thint').textContent = hints[v-1] || '';
+  ans.temps = v;
+});
+function setupS6() {
+  const p = ans.platform;
+  const title = document.getElementById('s6title');
+  const opts = document.getElementById('s6opts');
+  let data = [];
+  if(['youtube','tiktok','instagram'].includes(p)) {
+    data=[{v:'face',i:'😊',l:'Face cam',d:'Je montre mon visage'},{v:'faceless',i:'🎭',l:'Faceless',d:'Je reste anonyme'},{v:'screen',i:'🖥️',l:'Screen recording',d:'Tutoriels, captures'},{v:'mixte',i:'🔀',l:'Mixte',d:'Selon les vidéos'}];
+  } else if(p==='podcast') {
+    title.textContent='Quel format de podcast ?';
+    data=[{v:'solo',i:'🎤',l:'Solo',d:'Je parle seul'},{v:'invites',i:'👥',l:'Avec invités',d:'Interviews'},{v:'co',i:'🤝',l:'Co-animateur',d:'À deux'}];
+  } else if(p==='newsletter') {
+    title.textContent='Quel format de newsletter ?';
+    data=[{v:'court',i:'⚡',l:'Courte',d:'< 5 min de lecture'},{v:'long',i:'📖',l:'Long-form',d:'Analyses profondes'},{v:'curation',i:'🔖',l:'Curation',d:'Sélection de liens'}];
+  } else {
+    data=[{v:'video',i:'📹',l:'Vidéo',d:'YouTube/TikTok'},{v:'ecrit',i:'✍️',l:'Écrit',d:'Articles/Newsletter'},{v:'audio',i:'🎧',l:'Audio',d:'Podcast'},{v:'tout',i:'🌐',l:'Multi-format',d:'Tout à la fois'}];
+  }
+  opts.innerHTML = data.map(d=>`<button class="opt-btn" data-v="${d.v}"><div class="opt-icon">${d.i}</div><span class="opt-label">${d.l}</span><span class="opt-desc">${d.d}</span></button>`).join('');
+  opts.querySelectorAll('.opt-btn').forEach(b => {
+    b.addEventListener('click', () => { opts.querySelectorAll('.opt-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); document.getElementById('bn6').disabled=false; });
+  });
+}
+function showStep(n) {
+  const cur = document.querySelector('.step-wrap:not(.hidden)');
+  if(cur) { cur.classList.add('leaving'); setTimeout(()=>{cur.classList.add('hidden');cur.classList.remove('leaving');},200); }
+  setTimeout(()=>{
+    const el = document.getElementById('s'+n);
+    el.classList.remove('hidden'); el.classList.add('entering');
+    setTimeout(()=>el.classList.remove('entering'),320);
+    document.getElementById('snum').textContent=n;
+    document.getElementById('prog').style.width=(n/6*100)+'%';
+    window.scrollTo(0,0);
+  }, cur?210:0);
+}
+function next(s) {
+  if(s===1){ans.platform=document.querySelector('#s1 .opt-btn.sel').dataset.v;setupS6();}
+  if(s===3) ans.niveau=document.querySelector('#s3 .opt-btn.sel').dataset.v;
+  if(s===5) ans.objectif=document.querySelector('#s5 .opt-btn.sel').dataset.v;
+  if(s<6) showStep(s+1);
+  else { ans.visibilite=document.querySelector('#s6 .opt-btn.sel')?.dataset.v||'face'; save(); }
+}
+function back(s) { showStep(s-1); }
+function save() {
+  localStorage.setItem('nf_platform',ans.platform); localStorage.setItem('nf_interests',JSON.stringify(ans.interests));
+  localStorage.setItem('nf_niveau',ans.niveau); localStorage.setItem('nf_temps',ans.temps);
+  localStorage.setItem('nf_objectif',ans.objectif); localStorage.setItem('nf_visibilite',ans.visibilite);
+  document.getElementById('loader').classList.add('on');
+  setTimeout(()=>{ window.location.href='resultats'; },1800);
+}
+</script>
+</body>
+</html>

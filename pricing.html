@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NicheFind — Tarifs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0A0F1E; --bg2:#0F1628; --surface:#111827; --surface2:#162035;
+    --border:rgba(129,140,248,0.1); --border2:rgba(129,140,248,0.2);
+    --ink:#ffffff; --ink2:rgba(255,255,255,0.7); --muted:rgba(255,255,255,0.35);
+    --accent:#818CF8; --accent2:#A5B4FC; --accent-bg:rgba(129,140,248,0.1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; font-size:15px; }
+  header { padding:0 48px; height:56px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); background:rgba(10,15,30,0.9); backdrop-filter:blur(12px); position:sticky; top:0; z-index:50; }
+  .logo { font-size:1.05rem; font-weight:800; letter-spacing:-0.03em; color:var(--ink); text-decoration:none; }
+  .logo span { color:var(--accent); }
+  .back { color:var(--muted); font-size:0.82rem; text-decoration:none; font-weight:500; transition:color 0.15s; }
+  .back:hover { color:var(--ink2); }
+  .hero { padding:64px 48px 48px; text-align:center; max-width:580px; margin:0 auto; }
+  .eye { font-size:0.67rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  h1 { font-size:clamp(2rem,4vw,2.8rem); font-weight:800; letter-spacing:-0.04em; line-height:1.1; margin-bottom:12px; }
+  .sub { color:var(--muted); font-size:0.875rem; line-height:1.7; margin-bottom:32px; }
+  .toggle-wrap { display:inline-flex; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:3px; margin-bottom:52px; }
+  .tog { padding:7px 18px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; color:var(--muted); transition:all 0.15s; border:none; background:none; font-family:'Inter',sans-serif; }
+  .tog.on { background:var(--accent); color:var(--bg); font-weight:700; }
+  .save-tag { background:rgba(110,231,183,0.1); color:#6EE7B7; border:1px solid rgba(110,231,183,0.2); font-size:0.65rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
+  .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; max-width:920px; margin:0 auto; padding:0 48px 72px; }
+  .plan { background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:26px 22px; position:relative; }
+  .plan.feat { border-color:rgba(129,140,248,0.4); }
+  .feat-tag { position:absolute; top:-10px; left:18px; background:var(--accent); color:var(--bg); font-size:0.6rem; font-weight:800; letter-spacing:0.07em; text-transform:uppercase; padding:3px 9px; border-radius:4px; }
+  .p-name { font-size:0.67rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .p-price { font-size:2.2rem; font-weight:800; letter-spacing:-0.04em; margin-bottom:2px; }
+  .p-price sub { font-size:0.85rem; font-weight:400; color:var(--muted); font-family:'Inter',sans-serif; }
+  .p-save { font-size:0.72rem; color:#6EE7B7; font-weight:600; min-height:18px; margin-bottom:12px; }
+  .p-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; padding-bottom:16px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+  .p-feats { list-style:none; margin-bottom:22px; }
+  .p-feats li { font-size:0.8rem; padding:6px 0; border-bottom:1px solid var(--border); color:var(--ink2); display:flex; gap:8px; align-items:center; }
+  .p-feats li:last-child { border:none; }
+  .fy { color:#6EE7B7; flex-shrink:0; } .fn { color:rgba(255,255,255,0.15); flex-shrink:0; }
+  .p-cta { display:block; text-align:center; padding:11px; border-radius:7px; font-size:0.83rem; font-weight:700; text-decoration:none; cursor:pointer; border:none; width:100%; transition:all 0.15s; font-family:'Inter',sans-serif; }
+  .p-cta-g { background:var(--bg2); border:1px solid var(--border); color:var(--ink2); }
+  .p-cta-g:hover { border-color:var(--border2); color:var(--ink); }
+  .p-cta-f { background:#fff; color:var(--bg); }
+  .p-cta-f:hover { opacity:0.88; }
+  .compare { max-width:800px; margin:0 auto; padding:0 48px 72px; }
+  .compare h2 { font-size:1.5rem; font-weight:800; letter-spacing:-0.03em; margin-bottom:22px; }
+  table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  th { padding:10px 15px; text-align:left; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); }
+  th:not(:first-child) { text-align:center; }
+  td { padding:10px 15px; border-bottom:1px solid var(--border); color:var(--ink2); }
+  td:not(:first-child) { text-align:center; }
+  tbody tr:hover td { background:var(--surface2); }
+  .t-sect td { background:var(--bg2)!important; font-size:0.63rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+  .ty { color:#6EE7B7; font-weight:700; } .tn { color:rgba(255,255,255,0.15); } .thi { color:var(--accent2); font-weight:600; }
+  @media(max-width:768px) {
+    header,.hero,.plans,.compare { padding-left:20px; padding-right:20px; }
+    .plans { grid-template-columns:1fr; }
+    .hero { padding-top:40px; }
+    table { font-size:0.75rem; }
+    th,td { padding:9px 10px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Niche<span>Find</span></a>
+  <a href="index.html" class="back">← Accueil</a>
+</header>
+<div class="hero">
+  <div class="eye">Tarifs</div>
+  <h1>Simple et transparent</h1>
+  <p class="sub">Commence gratuitement. Passe au plan supérieur quand tu es prêt à aller plus loin.</p>
+  <div class="toggle-wrap">
+    <button class="tog on" id="tm" onclick="setB('m')">Mensuel</button>
+    <button class="tog" id="ta" onclick="setB('a')">Annuel <span class="save-tag">-20%</span></button>
+  </div>
+</div>
+<div class="plans">
+  <div class="plan">
+    <div class="p-name">Gratuit</div>
+    <div class="p-price">0€</div>
+    <div class="p-save"></div>
+    <p class="p-desc">Pour découvrir NicheFind et valider si l'outil te convient.</p>
+    <ul class="p-feats">
+      <li><span class="fy">✓</span>1 analyse de profil</li>
+      <li><span class="fy">✓</span>3 niches recommandées</li>
+      <li><span class="fy">✓</span>5 idées détaillées / niche</li>
+      <li><span class="fy">✓</span>RPM, tendances, engagement</li>
+      <li><span class="fn">○</span>Analyses illimitées</li>
+      <li><span class="fn">○</span>Affinage par audience</li>
+      <li><span class="fn">○</span>Alertes tendances</li>
+    </ul>
+    <a href="questionnaire.html" class="p-cta p-cta-g">Commencer gratuitement</a>
+  </div>
+  <div class="plan feat">
+    <div class="feat-tag">Populaire</div>
+    <div class="p-name">Créateur</div>
+    <div class="p-price" id="cp">9,99€ <sub>/mois</sub></div>
+    <div class="p-save" id="cs"></div>
+    <p class="p-desc">Pour les créateurs sérieux qui veulent des recommandations complètes.</p>
+    <ul class="p-feats">
+      <li><span class="fy">✓</span>Analyses illimitées</li>
+      <li><span class="fy">✓</span>30 idées détaillées / niche</li>
+      <li><span class="fy">✓</span>Affinage par audience cible</li>
+      <li><span class="fy">✓</span>Suivi mensuel des tendances</li>
+      <li><span class="fy">✓</span>Export PDF</li>
+      <li><span class="fn">○</span>Alertes temps réel</li>
+      <li><span class="fn">○</span>Accès API</li>
+    </ul>
+    <button class="p-cta p-cta-f" onclick="pick('creator')">Démarrer →</button>
+  </div>
+  <div class="plan">
+    <div class="p-name">Pro</div>
+    <div class="p-price" id="pp">29€ <sub>/mois</sub></div>
+    <div class="p-save" id="ps"></div>
+    <p class="p-desc">Pour les créateurs avancés et agences qui gèrent plusieurs chaînes.</p>
+    <ul class="p-feats">
+      <li><span class="fy">✓</span>Tout du plan Créateur</li>
+      <li><span class="fy">✓</span>Alertes tendances temps réel</li>
+      <li><span class="fy">✓</span>Accès API complet</li>
+      <li><span class="fy">✓</span>Multi-profils (5)</li>
+      <li><span class="fy">✓</span>Données de concurrence</li>
+      <li><span class="fy">✓</span>Support prioritaire 24h</li>
+      <li><span class="fy">✓</span>Ciblage audience avancé</li>
+    </ul>
+    <button class="p-cta p-cta-g" onclick="pick('pro')">Choisir Pro →</button>
+  </div>
+</div>
+<div class="compare">
+  <h2>Comparaison complète</h2>
+  <table>
+    <thead><tr><th style="width:42%">Fonctionnalité</th><th>Gratuit</th><th>Créateur</th><th>Pro</th></tr></thead>
+    <tbody>
+      <tr class="t-sect"><td colspan="4">Analyses & Recommandations</td></tr>
+      <tr><td>Analyses de profil</td><td>1</td><td class="thi">Illimitées</td><td class="thi">Illimitées</td></tr>
+      <tr><td>Idées de contenu / niche</td><td>5</td><td class="thi">30</td><td class="thi">30+</td></tr>
+      <tr><td>Descriptions détaillées</td><td class="ty">✓</td><td class="ty">✓</td><td class="ty">✓</td></tr>
+      <tr class="t-sect"><td colspan="4">Données & Métriques</td></tr>
+      <tr><td>RPM estimé + Tendance 12 mois</td><td class="ty">✓</td><td class="ty">✓</td><td class="ty">✓</td></tr>
+      <tr><td>Données YouTube live</td><td class="ty">✓</td><td class="ty">✓</td><td class="ty">✓</td></tr>
+      <tr><td>Alertes tendances</td><td class="tn">—</td><td>Mensuel</td><td class="thi">Temps réel</td></tr>
+      <tr><td>Données de concurrence</td><td class="tn">—</td><td class="tn">—</td><td class="ty">✓</td></tr>
+      <tr class="t-sect"><td colspan="4">Personnalisation & Export</td></tr>
+      <tr><td>Affinage par audience</td><td class="tn">—</td><td class="ty">✓</td><td class="ty">✓</td></tr>
+      <tr><td>Multi-profils</td><td class="tn">—</td><td class="tn">—</td><td class="thi">5 profils</td></tr>
+      <tr><td>Export PDF</td><td class="tn">—</td><td class="ty">✓</td><td class="ty">✓</td></tr>
+      <tr><td>Accès API</td><td class="tn">—</td><td class="tn">—</td><td class="ty">✓</td></tr>
+      <tr><td>Support</td><td>Email</td><td>Email</td><td class="thi">Prioritaire 24h</td></tr>
+    </tbody>
+  </table>
+</div>
+<script>
+let billing='m';
+function setB(b){
+  billing=b;
+  document.getElementById('tm').classList.toggle('on',b==='m');
+  document.getElementById('ta').classList.toggle('on',b==='a');
+  if(b==='a'){
+    document.getElementById('cp').innerHTML='7,99€ <sub>/mois</sub>';
+    document.getElementById('cs').textContent='Soit 95,88€/an — économisez 24€';
+    document.getElementById('pp').innerHTML='23€ <sub>/mois</sub>';
+    document.getElementById('ps').textContent='Soit 276€/an — économisez 72€';
+  } else {
+    document.getElementById('cp').innerHTML='9,99€ <sub>/mois</sub>';
+    document.getElementById('cs').textContent='';
+    document.getElementById('pp').innerHTML='29€ <sub>/mois</sub>';
+    document.getElementById('ps').textContent='';
+  }
+}
+function pick(p){ if(p==='pro') localStorage.setItem('nichefind_plan','pro'); alert('Paiement Stripe à intégrer. Plan : '+p); }
+</script>
+</body>
+</html>
